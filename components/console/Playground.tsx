@@ -11,38 +11,22 @@ import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import {
-  AlertCircle,
-  Cpu,
-  Copy,
-  Download,
-  Info,
   MessageSquare,
   RotateCcw,
   Save,
   Send,
   Settings,
-  Share2,
   ThumbsUp,
   ThumbsDown,
-  Timer,
-  Trash2,
-  ChevronDown,
-  Sparkles,
-  Zap,
-  CheckCircle2,
-  Command as CommandIcon,
   Clock,
-  ChevronRight,
-  Bookmark,
-  TerminalSquare,
-  Archive,
-  Plus,
   MoreHorizontal,
   PanelLeft,
   PanelLeftClose,
-  Mic,
-  FileText,
-  Check
+  Check,
+  Plus,
+  Trash2,
+  Copy,
+  TerminalSquare
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -76,10 +60,13 @@ interface Conversation {
 
 export function Playground() {
   // System prompts configuration
-  const defaultSystemPrompt = "You are Moorcheh AI, an edge-optimized assistant. You're designed to run efficiently on edge devices with low latency and high privacy. Be concise and helpful in your responses.";
-  const defaultContextFooter = "If you don't find information about this in the provided context, please let me know.";
-  const defaultNoContextFooter = "I don't have information about this in my context. Please upload relevant documents to help me answer your question.";
-  const defaultPromptHeader = "Answer the following question based only on the provided context: ";
+  const defaultSystemPrompt = "Base your answers on the context provided in the following context block and on our chat history. When using context chunks, prioritize information from chunks with higher relevance labels. Pay special attention to content labeled as 'Close Match' or 'Very High Relevance' as these are most likely to contain the most pertinent information for answering the query. Each piece of context includes: - A Score (0-1) where 1 means highly relevant and 0 means less relevant - A Label indicating the level of relevance ('Close Match', 'Very High Relevance', 'High Relevance', 'Good Relevance', 'Low Relevance', 'Very Low Relevance', 'Irrelevant') - The text of the context chunk Give more weight to information from contexts with higher relevance scores when formulating your answer. If contexts have conflicting information, prefer information from the more relevant (higher-scoring) contexts. When analyzing the provided context, consider both the relevance scores and their corresponding labels: - Close Match (score >= 0.8): Indicates near-perfect relevance to the query - Very High Relevance (0.4 <= score < 0.8): Strongly related content - High Relevance (0.2 <= score < 0.4): Significantly related content - Good Relevance (0.1 <= score < 0.2): Moderately related content - Low Relevance (0.05 <= score < 0.1): Minimally related content - Very Low Relevance (0.01 <= score < 0.05): Barely related content - Irrelevant (score < 0.01): No meaningful relation to the query If all the context provided are labeled as Irrelevant then you should answer: \"Unfortunately most of the retrieved context are not relevant to your query\" DO NOT answer with anything other than the markdown output, and do not include the <question> or <context> within your answer and do not make up your own markdown elements. <context> {context} </context>";
+  
+  const defaultContextFooter = "Base your answers on the context provided in the following context block and on our chat history. When using context chunks, prioritize information from chunks with higher relevance labels. Pay special attention to content labeled as 'Close Match' or 'Very High Relevance' as these are most likely to contain the most pertinent information for answering the query. Each piece of context includes: - A Score (0-1) where 1 means highly relevant and 0 means less relevant - A Label indicating the level of relevance ('Close Match', 'Very High Relevance', 'High Relevance', 'Good Relevance', 'Low Relevance', 'Very Low Relevance', 'Irrelevant') - The text of the context chunk Give more weight to information from contexts with higher relevance scores when formulating your answer. If contexts have conflicting information, prefer information from the more relevant (higher-scoring) contexts. When analyzing the provided context, consider both the relevance scores and their corresponding labels: - Close Match (score >= 0.8): Indicates near-perfect relevance to the query - Very High Relevance (0.4 <= score < 0.8): Strongly related content - High Relevance (0.2 <= score < 0.4): Significantly related content - Good Relevance (0.1 <= score < 0.2): Moderately related content - Low Relevance (0.05 <= score < 0.1): Minimally related content - Very Low Relevance (0.01 <= score < 0.05): Barely related content - Irrelevant (score < 0.01): No meaningful relation to the query If all the context provided are labeled as Irrelevant then you should answer: \"Unfortunately most of the retrieved context are not relevant to your query\" DO NOT answer with anything other than the markdown output, and do not include the <question> or <context> within your answer and do not make up your own markdown elements. <context> {context} </context>";
+  
+  const defaultNoContextFooter = "Unfortunately no context was retrieved for this query. You should answer to the best of your capabilites, but you should warn the user that no context was found. In your response, suggest the user to upload documents so that you can reply with a factual answer. You can use our chat history to remember details about our previous conversations. DO NOT answer with anything other than the markdown output, and do not include the <question> or <context> within your answer and do not make up your own markdown elements.";
+  
+  const defaultPromptHeader = "Your goal is to answer the question provided in the following question block <question> {question} </question> Important instructions: You always answer the question with markdown formatting and nothing else. You will be penalized if you do not answer with markdown when it would be possible. The markdown formatting you support: headings, bold, italic, links, tables, lists, code blocks, and blockquotes. You do not support html in markdown. You will be penalized if you use html tags. You do not support images and never include images. You will be penalized if you render images. It's important you always admit if you don't know something. Do not make anything up. Do not answer with anything other than the markdown output.";
 
   // State management
   const [messages, setMessages] = useState<Message[]>([
@@ -164,14 +151,10 @@ export function Playground() {
         }
       }
     }
-    return [
-      { id: "1", name: "Edge AI Implementation", date: "2024-05-01", preview: "How do I implement edge AI in my application?", messages: [] },
-      { id: "2", name: "Server Configuration", date: "2024-04-28", preview: "What's the best server setup for Moorcheh AI?", messages: [] },
-      { id: "3", name: "Deployment Strategy", date: "2024-04-25", preview: "Can you help with a deployment strategy for my edge devices?", messages: [] }
-    ];
+    return []; // Return empty array instead of default conversations
   });
 
-  // Save conversations to local storage when they change
+  // Add this separate effect to handle saving conversations to localStorage
   useEffect(() => {
     localStorage.setItem("moorcheh-conversations", JSON.stringify(conversations));
   }, [conversations]);
@@ -179,14 +162,11 @@ export function Playground() {
   // Save current messages to localStorage
   useEffect(() => {
     if (selectedConversation !== "new") {
-      const updatedConversations = conversations.map(convo => 
-        convo.id === selectedConversation ? { ...convo, messages: messages } : convo
-      );
-      setConversations(updatedConversations);
+      localStorage.setItem("moorcheh-conversations", JSON.stringify(conversations));
     } else {
       localStorage.setItem("moorcheh-current-chat", JSON.stringify(messages));
     }
-  }, [messages]);
+  }, [messages, selectedConversation]);
 
   // Load settings from local storage
   useEffect(() => {
@@ -214,8 +194,8 @@ export function Playground() {
     
     // Focus input on load
     inputRef.current?.focus();
-  }, []);
-
+  }, [conversations, selectedConversation]);
+  
   // Scroll to bottom of messages when new ones are added
   useEffect(() => {
     if (messagesEndRef.current) {
@@ -265,7 +245,7 @@ export function Playground() {
     // Add user message
     const newMessages = [
       ...messages,
-      { role: "user", content: input }
+      { role: "user" as Role, content: input }
     ];
     setMessages(newMessages);
     setInput("");
@@ -304,13 +284,13 @@ export function Playground() {
   
   // Create a new conversation
   const createNewChat = () => {
-    setMessages([
+      setMessages([
       { 
         role: "system", 
         content: systemPrompt 
       },
-      { 
-        role: "assistant", 
+        { 
+          role: "assistant", 
         content: "Hello! I'm Moorcheh AI, ready to assist you. How can I help you today?" 
       }
     ]);
@@ -325,16 +305,16 @@ export function Playground() {
   // Clear conversation
   const clearConversation = () => {
     if (window.confirm("Are you sure you want to reset this conversation?")) {
-      setMessages([
-        { 
-          role: "system", 
-          content: systemPrompt 
-        },
-        { 
-          role: "assistant", 
-          content: "Hello! I'm Moorcheh AI, ready to assist you. How can I help you today?" 
-        }
-      ]);
+    setMessages([
+      { 
+        role: "system", 
+        content: systemPrompt 
+      },
+      { 
+        role: "assistant", 
+        content: "Hello! I'm Moorcheh AI, ready to assist you. How can I help you today?" 
+      }
+    ]);
       
       // If this was a saved conversation, update it
       if (selectedConversation !== "new") {
@@ -343,9 +323,9 @@ export function Playground() {
             ? { 
                 ...convo, 
                 messages: [
-                  { role: "system", content: systemPrompt },
-                  { role: "assistant", content: "Hello! I'm Moorcheh AI, ready to assist you. How can I help you today?" }
-                ] 
+                  { role: "system" as Role, content: systemPrompt },
+                  { role: "assistant" as Role, content: "Hello! I'm Moorcheh AI, ready to assist you. How can I help you today?" }
+                ] as Message[]
               } 
             : convo
         );
@@ -374,10 +354,10 @@ export function Playground() {
         setSelectedConversation(newId);
       }
     } else {
-      // Update existing conversation
+      // Update existing conversation with proper type casting
       const updatedConversations = conversations.map(convo => 
         convo.id === selectedConversation 
-          ? { ...convo, messages: [...messages] } 
+          ? { ...convo, messages: [...messages] as Message[] } 
           : convo
       );
       setConversations(updatedConversations);
@@ -394,7 +374,7 @@ export function Playground() {
     
     const conversation = conversations.find(c => c.id === id);
     if (conversation) {
-      setSelectedConversation(id);
+    setSelectedConversation(id);
       if (conversation.messages && conversation.messages.length > 0) {
         setMessages(conversation.messages);
       } else {
@@ -458,30 +438,45 @@ export function Playground() {
     }
   };
   
-  return (
-    <div className="flex flex-col h-screen bg-black">
-      {/* Header */}
-      <header className="border-b border-gray-800 bg-gray-950 py-4 px-6">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <div className="flex items-center">
-            <div className="h-8 w-8 rounded-md bg-gradient-to-br from-blue-500 to-purple-500 mr-3 flex items-center justify-center">
-              <Cpu className="h-5 w-5 text-white" />
-            </div>
-            <h1 className="text-xl font-bold text-white">Moorcheh</h1>
-          </div>
-          
-          <div className="flex items-center gap-6">
-            <nav className="hidden md:flex items-center gap-6">
-              <a href="/console" className="text-sm font-medium text-white">Dashboard</a>
-              <a href="/console/playground" className="text-sm font-medium text-gray-400 hover:text-white transition-colors">Playground</a>
-              <a href="/console/documents" className="text-sm font-medium text-gray-400 hover:text-white transition-colors">Documents</a>
-              <a href="/console/api-keys" className="text-sm font-medium text-gray-400 hover:text-white transition-colors">API Keys</a>
-              <a href="/console/docs" className="text-sm font-medium text-gray-400 hover:text-white transition-colors">Documentation</a>
-            </nav>
-          </div>
-        </div>
-      </header>
+  const [activeTab, setActiveTab] = useState("chat");
+
+  // At the very top of the component, add this effect to hide the global footer
+  useEffect(() => {
+    // Hide the global footer when this component mounts
+    const footer = document.querySelector('footer');
+    if (footer) {
+      const originalDisplay = footer.style.display;
+      footer.style.display = 'none';
       
+      // Restore the footer when component unmounts
+      return () => {
+        if (footer) {
+          footer.style.display = originalDisplay;
+        }
+      };
+    }
+  }, []);
+
+  // Add this new function after loadConversation
+  const deleteConversation = (id: string, e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent triggering the parent button click
+    
+    if (window.confirm("Are you sure you want to delete this conversation?")) {
+      const updatedConversations = conversations.filter(convo => convo.id !== id);
+      setConversations(updatedConversations);
+      
+      // If the deleted conversation was selected, create a new chat
+      if (id === selectedConversation) {
+        createNewChat();
+      }
+      
+      // Save to localStorage immediately
+      localStorage.setItem("moorcheh-conversations", JSON.stringify(updatedConversations));
+    }
+  };
+
+  return (
+    <div className="flex flex-col h-screen bg-black overflow-hidden">
       <div className="flex flex-1 overflow-hidden">
         {/* Left sidebar - conversation history */}
         {sidebarVisible && (
@@ -492,24 +487,17 @@ export function Playground() {
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
-                      <Button variant="ghost" size="sm" className="h-7 w-7 p-0 text-gray-400 hover:text-white hover:bg-gray-900">
-                        <Archive className="h-4 w-4" />
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent side="right">
-                      <p>Archive All</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button variant="ghost" size="sm" className="h-7 w-7 p-0 text-gray-400 hover:text-white hover:bg-gray-900">
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        className="h-7 w-7 p-0 text-gray-400 hover:text-white hover:bg-gray-900"
+                        onClick={createNewChat}
+                      >
                         <Plus className="h-4 w-4" />
                       </Button>
                     </TooltipTrigger>
                     <TooltipContent side="right">
-                      <p>Create Folder</p>
+                      <p>New Chat</p>
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
@@ -518,13 +506,9 @@ export function Playground() {
             
             <Button 
               onClick={createNewChat}
-              className={`w-full justify-start mb-3 ${
-                selectedConversation === "new" 
-                  ? "bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white" 
-                  : "bg-gray-900 text-gray-300 hover:bg-gray-800 hover:text-white"
-              }`}
+              className="w-full justify-start mb-3 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white hover:shadow-lg hover:scale-105 transition-all duration-300"
             >
-              <Sparkles className="h-4 w-4 mr-2" />
+              <Plus className="h-4 w-4 mr-2" />
               New Chat
             </Button>
             
@@ -545,15 +529,23 @@ export function Playground() {
                         <TerminalSquare className="h-3 w-3 mr-2 text-gray-500" />
                         <span>{convo.name}</span>
                       </div>
+                      <div className="flex">
                       <Button 
                         variant="ghost" 
                         size="sm" 
-                        className={`h-5 w-5 p-0 text-gray-500 hover:text-white hover:bg-gray-700 rounded-full ${
-                          selectedConversation === convo.id ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
-                        }`}
+                          onClick={(e) => deleteConversation(convo.id, e)}
+                          className="h-5 w-5 p-0 text-gray-400 hover:text-red-500 hover:bg-gray-700 rounded-full"
+                        >
+                          <Trash2 className="h-3 w-3" />
+                        </Button>
+                        <Button 
+                          variant="ghost" 
+                          size="sm" 
+                          className="h-5 w-5 p-0 ml-1 text-gray-400 hover:text-white hover:bg-gray-700 rounded-full"
                       >
                         <MoreHorizontal className="h-3 w-3" />
                       </Button>
+                      </div>
                     </div>
                     <div className="text-xs opacity-70 truncate mt-1">{convo.preview}</div>
                     <div className="text-xs opacity-50 mt-1 flex items-center">
@@ -631,7 +623,7 @@ export function Playground() {
             </div>
             
             <div className="flex space-x-2">
-              <Tabs defaultValue="chat" className="flex items-center">
+              <Tabs defaultValue="chat" value={activeTab} onValueChange={setActiveTab} className="flex items-center">
                 <TabsList className="bg-gray-900 border border-gray-800">
                   <TabsTrigger 
                     value="chat" 
@@ -653,14 +645,14 @@ export function Playground() {
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <Button 
-                      variant="outline" 
+              <Button 
+                variant="outline" 
                       size="icon" 
                       className="border-gray-800 bg-gray-900 hover:bg-gray-800 hover:text-white text-gray-400"
                       onClick={saveConversation}
-                    >
+              >
                       <Save className="h-4 w-4" />
-                    </Button>
+              </Button>
                   </TooltipTrigger>
                   <TooltipContent side="bottom">
                     <p>Save Conversation</p>
@@ -671,14 +663,14 @@ export function Playground() {
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <Button 
-                      variant="outline" 
+              <Button 
+                variant="outline" 
                       size="icon" 
                       className="border-gray-800 bg-gray-900 hover:bg-gray-800 hover:text-white text-gray-400"
                       onClick={clearConversation}
-                    >
+              >
                       <RotateCcw className="h-4 w-4" />
-                    </Button>
+              </Button>
                   </TooltipTrigger>
                   <TooltipContent side="bottom">
                     <p>Reset Conversation</p>
@@ -688,419 +680,401 @@ export function Playground() {
             </div>
           </div>
           
-          <Tabs defaultValue="chat" className="flex-1 flex flex-col">
-            <TabsContent value="chat" className="flex-1 flex flex-col">
-              {/* Messages container */}
-              <ScrollArea className="flex-1 p-4">
-                <div className="max-w-4xl mx-auto space-y-6">
-                  {messages.filter(m => m.role !== "system").map((message, index) => (
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col overflow-hidden">
+            <TabsContent value="chat" className="h-full flex flex-col">
+              {/* Messages container - modified to have a set max height and proper overflow */}
+              <div className="flex-1 overflow-hidden flex flex-col relative">
+                <ScrollArea className="absolute inset-0 p-4 pb-20">
+                  <div className="max-w-4xl mx-auto space-y-6">
+                    {messages.filter(m => m.role !== "system").map((message, index) => (
                     <div 
-                      key={index} 
-                      className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}
-                    >
-                      <div className={`
-                        ${message.role === "user" ? "bg-gray-800" : "bg-gray-900"} 
-                        p-4 rounded-xl max-w-[85%] relative group
-                      `}>
-                        {message.role === "user" ? (
-                          <div>
-                            <div className="font-semibold text-gray-300 mb-1 flex items-center">
-                              <span>Question:</span>
-                            </div>
-                            <div className="text-white whitespace-pre-wrap">{message.content}</div>
+                      key={index}
+                        className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}
+                      >
+                        <div className={`
+                          ${message.role === "user" ? "bg-gray-800" : "bg-gray-900"} 
+                          p-4 rounded-xl max-w-[85%] relative group
+                        `}>
+                          {message.role === "user" ? (
+                            <div>
+                              <div className="font-semibold text-gray-300 mb-1 flex items-center">
+                                <span>Question:</span>
+                              </div>
+                              <div className="text-white whitespace-pre-wrap">{message.content}</div>
                           </div>
                         ) : (
-                          <div>
-                            <div className="font-semibold text-gray-300 mb-1 flex items-center">
-                              <span>Response:</span>
-                            </div>
-                            <div className="text-white whitespace-pre-wrap">
-                              {message.content}
-                            </div>
-                            
-                            {/* Metadata section for kiosk mode */}
-                            {kioskMode && message.metadata && message.metadata.length > 0 && (
-                              <div className="mt-4 pt-3 border-t border-gray-700">
-                                <h4 className="text-sm font-medium text-gray-300 mb-2">Metadata:</h4>
-                                <div className="space-y-3">
-                                  {message.metadata.map((meta, metaIndex) => (
-                                    <div 
-                                      key={metaIndex} 
-                                      className="bg-gray-800 rounded-md p-3 text-sm"
-                                    >
-                                      <div className="grid grid-cols-2 gap-2 text-xs mb-2">
-                                        <div>
-                                          <span className="text-gray-400">ID: </span>
-                                          <span className="text-gray-200">{meta.id}</span>
+                            <div>
+                              <div className="font-semibold text-gray-300 mb-1 flex items-center">
+                                <span>Response:</span>
+                          </div>
+                              <div className="text-white whitespace-pre-wrap">
+                          {message.content}
+                        </div>
+                              
+                              {/* Metadata section for kiosk mode */}
+                              {kioskMode && message.metadata && message.metadata.length > 0 && (
+                                <div className="mt-4 pt-3 border-t border-gray-700">
+                                  <h4 className="text-sm font-medium text-gray-300 mb-2">Metadata:</h4>
+                                  <div className="space-y-3">
+                                    {message.metadata.map((meta, metaIndex) => (
+                                      <div 
+                                        key={metaIndex} 
+                                        className="bg-gray-800 rounded-md p-3 text-sm"
+                                      >
+                                        <div className="grid grid-cols-2 gap-2 text-xs mb-2">
+                                          <div>
+                                            <span className="text-gray-400">ID: </span>
+                                            <span className="text-gray-200">{meta.id}</span>
+                                          </div>
+                                          <div>
+                                            <span className="text-gray-400">Score: </span>
+                                            <span className="text-gray-200">{meta.score.toFixed(4)}</span>
+                                          </div>
+                                          <div>
+                                            <span className="text-gray-400">Label: </span>
+                                            <Badge 
+                                              className={`
+                                                ${meta.score > 0.8 ? 'bg-green-800 hover:bg-green-700' :
+                                                  meta.score > 0.5 ? 'bg-blue-800 hover:bg-blue-700' :
+                                                  meta.score > 0.3 ? 'bg-yellow-800 hover:bg-yellow-700' :
+                                                  'bg-gray-800 hover:bg-gray-700'}
+                                              `}
+                                            >
+                                              {meta.label}
+                                            </Badge>
+                                          </div>
+                                          <div>
+                                            <span className="text-gray-400">Source: </span>
+                                            <span className="text-blue-400">{meta.source}</span>
+                                          </div>
+                                          <div>
+                                            <span className="text-gray-400">Page: </span>
+                                            <span className="text-gray-200">{meta.page}</span>
+                                          </div>
                                         </div>
-                                        <div>
-                                          <span className="text-gray-400">Score: </span>
-                                          <span className="text-gray-200">{meta.score.toFixed(4)}</span>
-                                        </div>
-                                        <div>
-                                          <span className="text-gray-400">Label: </span>
-                                          <Badge 
-                                            className={`
-                                              ${meta.score > 0.8 ? 'bg-green-800 hover:bg-green-700' :
-                                                meta.score > 0.5 ? 'bg-blue-800 hover:bg-blue-700' :
-                                                meta.score > 0.3 ? 'bg-yellow-800 hover:bg-yellow-700' :
-                                                'bg-gray-800 hover:bg-gray-700'}
-                                            `}
-                                          >
-                                            {meta.label}
-                                          </Badge>
-                                        </div>
-                                        <div>
-                                          <span className="text-gray-400">Source: </span>
-                                          <span className="text-blue-400">{meta.source}</span>
-                                        </div>
-                                        <div>
-                                          <span className="text-gray-400">Page: </span>
-                                          <span className="text-gray-200">{meta.page}</span>
+                                        <div className="text-gray-300 text-xs">
+                                          <span className="text-gray-400">Content: </span>
+                                          {meta.content.length > 100 
+                                            ? `${meta.content.substring(0, 100)}...` 
+                                            : meta.content
+                                          }
                                         </div>
                                       </div>
-                                      <div className="text-gray-300 text-xs">
-                                        <span className="text-gray-400">Content: </span>
-                                        {meta.content.length > 100 
-                                          ? `${meta.content.substring(0, 100)}...` 
-                                          : meta.content
-                                        }
-                                      </div>
-                                    </div>
-                                  ))}
+                                    ))}
+                                  </div>
                                 </div>
+                              )}
+                              
+                              {/* Action buttons */}
+                              <div className="flex mt-3 space-x-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  className="h-8 px-2 text-gray-400 hover:text-white hover:bg-gray-800"
+                                  onClick={() => copyMessage(message.content, index)}
+                                >
+                                  {copySuccess === `msg-${index}` ? (
+                                    <Check className="h-4 w-4 mr-1" />
+                                  ) : (
+                                    <Copy className="h-4 w-4 mr-1" />
+                                  )}
+                                  {copySuccess === `msg-${index}` ? "Copied" : "Copy"}
+                            </Button>
+                                
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  className={`h-8 px-2 ${likedMessages.has(index) ? 'text-green-500' : 'text-gray-400 hover:text-white'} hover:bg-gray-800`}
+                                  onClick={() => toggleLike(index)}
+                                >
+                                  <ThumbsUp className="h-4 w-4 mr-1" />
+                                  {likedMessages.has(index) ? "Liked" : "Like"}
+                            </Button>
+                                
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  className={`h-8 px-2 ${dislikedMessages.has(index) ? 'text-red-500' : 'text-gray-400 hover:text-white'} hover:bg-gray-800`}
+                                  onClick={() => toggleDislike(index)}
+                                >
+                                  <ThumbsDown className="h-4 w-4 mr-1" />
+                                  {dislikedMessages.has(index) ? "Disliked" : "Dislike"}
+                            </Button>
                               </div>
-                            )}
-                            
-                            {/* Action buttons */}
-                            <div className="flex mt-3 space-x-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                className="h-8 px-2 text-gray-400 hover:text-white hover:bg-gray-800"
-                                onClick={() => copyMessage(message.content, index)}
-                              >
-                                {copySuccess === `msg-${index}` ? (
-                                  <Check className="h-4 w-4 mr-1" />
-                                ) : (
-                                  <Copy className="h-4 w-4 mr-1" />
-                                )}
-                                {copySuccess === `msg-${index}` ? "Copied" : "Copy"}
-                              </Button>
-                              
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                className={`h-8 px-2 ${likedMessages.has(index) ? 'text-green-500' : 'text-gray-400 hover:text-white'} hover:bg-gray-800`}
-                                onClick={() => toggleLike(index)}
-                              >
-                                <ThumbsUp className="h-4 w-4 mr-1" />
-                                {likedMessages.has(index) ? "Liked" : "Like"}
-                              </Button>
-                              
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                className={`h-8 px-2 ${dislikedMessages.has(index) ? 'text-red-500' : 'text-gray-400 hover:text-white'} hover:bg-gray-800`}
-                                onClick={() => toggleDislike(index)}
-                              >
-                                <ThumbsDown className="h-4 w-4 mr-1" />
-                                {dislikedMessages.has(index) ? "Disliked" : "Dislike"}
-                              </Button>
-                            </div>
                           </div>
                         )}
                       </div>
                     </div>
-                  ))}
-                  
-                  {isLoading && (
-                    <div className="flex justify-start">
-                      <div className="bg-gray-900 p-4 rounded-xl max-w-[85%]">
-                        <div className="text-white">
-                          <div className="flex space-x-2 items-center text-sm text-gray-400">
-                            <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
-                            <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse delay-100"></div>
-                            <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse delay-200"></div>
-                            <span className="ml-2">Moorcheh AI is thinking...</span>
-                          </div>
-                        </div>
+                    ))}
+                
+                {isLoading && (
+                      <div className="flex justify-start">
+                        <div className="bg-gray-900 p-4 rounded-xl max-w-[85%]">
+                          <div className="text-white">
+                            <div className="flex space-x-2 items-center text-sm text-gray-400">
+                              <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+                              <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse delay-100"></div>
+                              <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse delay-200"></div>
+                              <span className="ml-2">Moorcheh AI is thinking...</span>
                       </div>
-                    </div>
-                  )}
-                  
-                  {/* Reference for scrolling to bottom */}
-                  <div ref={messagesEndRef} />
-                </div>
-              </ScrollArea>
-
-              {/* Input area */}
-              <div className="p-4 border-t border-gray-800 bg-black">
-                <div className="max-w-4xl mx-auto">
-                  <div className="relative">
-                    <div className="flex">
-                      <Input
-                        ref={inputRef}
-                        placeholder="Send a message..."
-                        value={input}
-                        onChange={e => setInput(e.target.value)}
-                        onKeyDown={handleKeyDown}
-                        className="bg-gray-900 border-gray-800 text-white focus-visible:ring-blue-500 pr-10"
-                      />
-                      <Button 
-                        onClick={sendMessage} 
-                        disabled={!input.trim() || isLoading} 
-                        className="ml-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white"
-                      >
-                        <Send className="h-4 w-4 mr-1" />
-                        Send
-                      </Button>
-                    </div>
-                    <div className="absolute right-[72px] top-1/2 transform -translate-y-1/2 flex space-x-1">
-                      <TooltipProvider>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <Button 
-                              variant="ghost" 
-                              size="icon"
-                              className="h-8 w-8 p-0 text-gray-400 hover:text-white hover:bg-gray-800 rounded-full"
-                            >
-                              <Mic className="h-4 w-4" />
-                            </Button>
-                          </TooltipTrigger>
-                          <TooltipContent side="top">
-                            <p>Voice Input (Coming Soon)</p>
-                          </TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
-                      
-                      <TooltipProvider>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <Button 
-                              variant="ghost" 
-                              size="icon"
-                              className="h-8 w-8 p-0 text-gray-400 hover:text-white hover:bg-gray-800 rounded-full"
-                            >
-                              <FileText className="h-4 w-4" />
-                            </Button>
-                          </TooltipTrigger>
-                          <TooltipContent side="top">
-                            <p>Upload Document</p>
-                          </TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
+                          </div>
                     </div>
                   </div>
-                  <div className="flex justify-center mt-2">
-                    <p className="text-xs text-gray-500">
-                      {edgeOptimization ? (
-                        <span className="flex items-center">
-                          <Zap className="h-3 w-3 mr-1 text-green-500" />
-                          Edge Optimized: Running at low latency on your device
-                        </span>
-                      ) : (
-                        <span className="flex items-center">
-                          <CommandIcon className="h-3 w-3 mr-1 text-blue-500" />
-                          Cloud Mode: Processing with full capabilities
-                        </span>
-                      )}
-                    </p>
+                )}
+                    
+                    {/* Reference for scrolling to bottom */}
+                    <div ref={messagesEndRef} className="pb-24" />
+                  </div>
+              </ScrollArea>
+              </div>
+              
+              {/* Input area - attached to bottom of parent container */}
+              <div className="border-t border-gray-800 bg-black z-20 w-full">
+                <div className="max-w-4xl mx-auto p-4">
+                  <div className="relative">
+                    <div className="flex items-center">
+                  <Input
+                  ref={inputRef}
+                        placeholder="Send a message..."
+                  value={input}
+                        onChange={e => setInput(e.target.value)}
+                  onKeyDown={handleKeyDown}
+                        className="bg-gray-900 border-gray-800 text-white focus-visible:ring-blue-500"
+                      />
+                      <div className="flex items-center ml-2">
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <div className="flex items-center mr-2">
+                                <Switch 
+                                  id="chat-kiosk-mode"
+                                  checked={kioskMode} 
+                                  onCheckedChange={setKioskMode}
+                                  className="data-[state=checked]:bg-blue-600 data-[state=checked]:border-blue-600 border-gray-600"
+                                />
+                                <Label htmlFor="chat-kiosk-mode" className="text-white text-xs cursor-pointer ml-2">
+                                  Kiosk
+                                </Label>
+                              </div>
+                            </TooltipTrigger>
+                            <TooltipContent side="top">
+                              <p>Toggle Kiosk Mode</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                  <Button 
+                          onClick={sendMessage} 
+                          disabled={!input.trim() || isLoading} 
+                          className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white"
+                        >
+                          <Send className="h-4 w-4 mr-1" />
+                          Send
+                  </Button>
+                </div>
+                  </div>
                   </div>
                 </div>
               </div>
             </TabsContent>
             
-            <TabsContent value="settings" className="flex-1 overflow-auto p-4">
-              <div className="max-w-2xl mx-auto">
-                <div className="space-y-6">
-                  <div className="space-y-1">
-                    <h2 className="text-lg font-medium text-white">System Prompt Settings</h2>
-                    <p className="text-sm text-gray-400">Configure how the AI interprets and responds to queries</p>
-                  </div>
-                  
-                  <Accordion type="single" collapsible defaultValue="system-prompt" className="space-y-4">
-                    <AccordionItem value="system-prompt" className="border-gray-800">
-                      <AccordionTrigger className="hover:bg-gray-900 rounded-md px-3 py-2 text-gray-200">System Prompt</AccordionTrigger>
-                      <AccordionContent className="pt-2 pb-4 px-3">
-                        <Textarea 
-                          value={systemPrompt} 
-                          onChange={e => setSystemPrompt(e.target.value)}
-                          className="bg-gray-900 border-gray-800 text-white h-32"
-                          placeholder="Enter system prompt..."
-                        />
-                        <p className="text-xs text-gray-500 mt-1">
-                          Defines the AI's personality and basic instructions
-                        </p>
-                      </AccordionContent>
-                    </AccordionItem>
+            <TabsContent value="settings" className="h-full overflow-hidden">
+              <ScrollArea className="h-full px-4 pb-24">
+                <div className="max-w-2xl mx-auto py-4">
+                    <div className="space-y-6">
+                    <div className="space-y-1">
+                      <h2 className="text-lg font-medium text-white">System Prompt Settings</h2>
+                      <p className="text-sm text-gray-400">Configure how the AI interprets and responds to queries</p>
+                        </div>
                     
-                    <AccordionItem value="context-footer" className="border-gray-800">
-                      <AccordionTrigger className="hover:bg-gray-900 rounded-md px-3 py-2 text-gray-200">Context Footer</AccordionTrigger>
-                      <AccordionContent className="pt-2 pb-4 px-3">
-                        <Textarea 
-                          value={contextFooter} 
-                          onChange={e => setContextFooter(e.target.value)}
-                          className="bg-gray-900 border-gray-800 text-white h-24"
-                          placeholder="Enter context footer..."
-                        />
-                        <p className="text-xs text-gray-500 mt-1">
-                          Text to add after responses when relevant context is found
-                        </p>
-                      </AccordionContent>
-                    </AccordionItem>
-                    
-                    <AccordionItem value="no-context-footer" className="border-gray-800">
-                      <AccordionTrigger className="hover:bg-gray-900 rounded-md px-3 py-2 text-gray-200">No Context Footer</AccordionTrigger>
-                      <AccordionContent className="pt-2 pb-4 px-3">
-                        <Textarea 
-                          value={noContextFooter} 
-                          onChange={e => setNoContextFooter(e.target.value)}
-                          className="bg-gray-900 border-gray-800 text-white h-24"
-                          placeholder="Enter no context footer..."
-                        />
-                        <p className="text-xs text-gray-500 mt-1">
-                          Text to add after responses when no relevant context is found
-                        </p>
-                      </AccordionContent>
-                    </AccordionItem>
-                    
-                    <AccordionItem value="prompt-header" className="border-gray-800">
-                      <AccordionTrigger className="hover:bg-gray-900 rounded-md px-3 py-2 text-gray-200">Prompt Header</AccordionTrigger>
-                      <AccordionContent className="pt-2 pb-4 px-3">
-                        <Textarea 
-                          value={promptHeader} 
-                          onChange={e => setPromptHeader(e.target.value)}
-                          className="bg-gray-900 border-gray-800 text-white h-24"
-                          placeholder="Enter prompt header..."
-                        />
-                        <p className="text-xs text-gray-500 mt-1">
-                          Text to prepend to user queries when using context
-                        </p>
-                      </AccordionContent>
-                    </AccordionItem>
-                  </Accordion>
+                    <Accordion type="single" collapsible defaultValue="system-prompt" className="space-y-4">
+                      <AccordionItem value="system-prompt" className="border-gray-800">
+                        <AccordionTrigger className="hover:bg-gray-900 rounded-md px-3 py-2 text-gray-200">System Prompt</AccordionTrigger>
+                        <AccordionContent className="pt-2 pb-4 px-3">
+                        <Textarea
+                          value={systemPrompt}
+                            onChange={e => setSystemPrompt(e.target.value)}
+                            className="bg-gray-900 border-gray-800 text-white h-32"
+                            placeholder="Enter system prompt..."
+                          />
+                          <p className="text-xs text-gray-500 mt-1">
+                            Defines the AI&apos;s personality and basic instructions
+                          </p>
+                        </AccordionContent>
+                      </AccordionItem>
+                      
+                      <AccordionItem value="context-footer" className="border-gray-800">
+                        <AccordionTrigger className="hover:bg-gray-900 rounded-md px-3 py-2 text-gray-200">Context Footer</AccordionTrigger>
+                        <AccordionContent className="pt-2 pb-4 px-3">
+                          <Textarea 
+                            value={contextFooter} 
+                            onChange={e => setContextFooter(e.target.value)}
+                            className="bg-gray-900 border-gray-800 text-white h-24"
+                            placeholder="Enter context footer..."
+                          />
+                          <p className="text-xs text-gray-500 mt-1">
+                            Text to add after responses when relevant context is found
+                          </p>
+                        </AccordionContent>
+                      </AccordionItem>
+                      
+                      <AccordionItem value="no-context-footer" className="border-gray-800">
+                        <AccordionTrigger className="hover:bg-gray-900 rounded-md px-3 py-2 text-gray-200">No Context Footer</AccordionTrigger>
+                        <AccordionContent className="pt-2 pb-4 px-3">
+                          <Textarea 
+                            value={noContextFooter} 
+                            onChange={e => setNoContextFooter(e.target.value)}
+                            className="bg-gray-900 border-gray-800 text-white h-24"
+                            placeholder="Enter no context footer..."
+                          />
+                          <p className="text-xs text-gray-500 mt-1">
+                            Text to add after responses when no relevant context is found
+                          </p>
+                        </AccordionContent>
+                      </AccordionItem>
+                      
+                      <AccordionItem value="prompt-header" className="border-gray-800">
+                        <AccordionTrigger className="hover:bg-gray-900 rounded-md px-3 py-2 text-gray-200">Prompt Header</AccordionTrigger>
+                        <AccordionContent className="pt-2 pb-4 px-3">
+                          <Textarea 
+                            value={promptHeader} 
+                            onChange={e => setPromptHeader(e.target.value)}
+                            className="bg-gray-900 border-gray-800 text-white h-24"
+                            placeholder="Enter prompt header..."
+                          />
+                          <p className="text-xs text-gray-500 mt-1">
+                            Text to prepend to user queries when using context
+                          </p>
+                        </AccordionContent>
+                      </AccordionItem>
+                    </Accordion>
+                      </div>
+                      
+                  <Separator className="bg-gray-800 my-8" />
                   
-                  <Separator className="bg-gray-800" />
-                  
-                  <div className="space-y-6">
+                  <div className="space-y-8">
                     <div className="space-y-1">
                       <h2 className="text-lg font-medium text-white">Model Parameters</h2>
                       <p className="text-sm text-gray-400">Adjust how the AI generates responses</p>
                     </div>
                     
-                    <div className="space-y-6">
-                      <div className="space-y-3">
+                    <div className="space-y-10">
+                      <div className="space-y-4 bg-gray-900/50 p-4 rounded-lg">
                         <div className="flex items-center justify-between">
                           <Label className="text-white">Temperature: {temperature.toFixed(1)}</Label>
-                          <span className="text-xs text-gray-400">
+                          <span className="text-xs text-gray-300 px-2 py-1 bg-gray-800 rounded-full">
                             {temperature < 0.3 ? "More precise" : 
                              temperature > 0.7 ? "More creative" : "Balanced"}
                           </span>
-                        </div>
-                        <Slider 
-                          min={0} 
-                          max={1} 
-                          step={0.1} 
-                          value={[temperature]} 
+                          </div>
+                          <Slider
+                            min={0}
+                            max={1}
+                            step={0.1}
+                            value={[temperature]}
                           onValueChange={value => setTemperature(value[0])}
-                          className="mt-1"
+                          className="mt-1 [&>[data-orientation=horizontal]>[data-orientation=horizontal]]:bg-gradient-to-r [&>[data-orientation=horizontal]>[data-orientation=horizontal]]:from-blue-600 [&>[data-orientation=horizontal]>[data-orientation=horizontal]]:to-purple-600 [&>span>span]:bg-gradient-to-r [&>span>span]:from-blue-600 [&>span>span]:to-purple-600 [&>span>span]:border-2 [&>span>span]:border-white"
                         />
-                      </div>
-                      
-                      <div className="space-y-3">
+                        <div className="flex justify-between text-xs text-gray-400">
+                          <span>Precise (0.0)</span>
+                          <span>Balanced (0.5)</span>
+                          <span>Creative (1.0)</span>
+                          </div>
+                        </div>
+                        
+                      <div className="space-y-4 bg-gray-900/50 p-4 rounded-lg">
                         <div className="flex items-center justify-between">
                           <Label className="text-white">Max Tokens: {maxTokens}</Label>
-                          <span className="text-xs text-gray-400">
+                          <span className="text-xs text-gray-300 px-2 py-1 bg-gray-800 rounded-full">
                             {maxTokens < 512 ? "Brief responses" : 
                              maxTokens > 2048 ? "Detailed responses" : "Standard responses"}
                           </span>
-                        </div>
-                        <Slider 
+                          </div>
+                          <Slider
                           min={128} 
-                          max={4096} 
+                            max={4096}
                           step={128} 
-                          value={[maxTokens]} 
+                            value={[maxTokens]}
                           onValueChange={value => setMaxTokens(value[0])}
-                          className="mt-1"
+                          className="mt-1 [&>[data-orientation=horizontal]>[data-orientation=horizontal]]:bg-gradient-to-r [&>[data-orientation=horizontal]>[data-orientation=horizontal]]:from-blue-600 [&>[data-orientation=horizontal]>[data-orientation=horizontal]]:to-purple-600 [&>span>span]:bg-gradient-to-r [&>span>span]:from-blue-600 [&>span>span]:to-purple-600 [&>span>span]:border-2 [&>span>span]:border-white"
                         />
+                        <div className="flex justify-between text-xs text-gray-400">
+                          <span>Brief (128)</span>
+                          <span>Standard (1024)</span>
+                          <span>Detailed (4096)</span>
+                          </div>
+                        </div>
                       </div>
                       
-                      <div className="grid gap-4 grid-cols-1 md:grid-cols-2">
+                    <div className="grid gap-5 grid-cols-1 md:grid-cols-2 mt-8">
+                      <Card className="bg-gray-900 border-gray-800 p-3">
                         <div className="space-y-2">
-                          <div className="flex items-center justify-between">
+                      <div className="flex items-center justify-between">
                             <Label className="text-white">Streaming</Label>
-                            <Switch 
-                              checked={streamingEnabled} 
-                              onCheckedChange={setStreamingEnabled}
-                            />
-                          </div>
+                        <Switch
+                          checked={streamingEnabled}
+                          onCheckedChange={setStreamingEnabled}
+                              className="data-[state=checked]:bg-blue-600 data-[state=checked]:border-blue-600 border-gray-600"
+                        />
+                      </div>
                           <p className="text-xs text-gray-400">
-                            Show responses as they're generated
+                            Show responses as they&apos;re generated
                           </p>
-                        </div>
-                        
+                  </div>
+                </Card>
+                
+                      <Card className="bg-gray-900 border-gray-800 p-3">
                         <div className="space-y-2">
-                          <div className="flex items-center justify-between">
-                            <Label className="text-white">Kiosk Mode</Label>
-                            <Switch 
-                              checked={kioskMode} 
-                              onCheckedChange={setKioskMode}
-                            />
-                          </div>
-                          <p className="text-xs text-gray-400">
-                            Only answer from uploaded documents
-                          </p>
-                        </div>
-                        
-                        <div className="space-y-2">
-                          <div className="flex items-center justify-between">
+                      <div className="flex items-center justify-between">
                             <Label className="text-white">JSON Mode</Label>
                             <Switch 
                               checked={jsonMode} 
                               onCheckedChange={setJsonMode}
+                              className="data-[state=checked]:bg-blue-600 data-[state=checked]:border-blue-600 border-gray-600"
                             />
-                          </div>
+                        </div>
                           <p className="text-xs text-gray-400">
                             Return responses in JSON format
                           </p>
-                        </div>
-                        
+                      </div>
+                      </Card>
+                      
+                      <Card className="bg-gray-900 border-gray-800 p-3">
                         <div className="space-y-2">
-                          <div className="flex items-center justify-between">
+                      <div className="flex items-center justify-between">
                             <Label className="text-white">Edge Optimization</Label>
-                            <Switch 
+                        <Switch 
                               checked={edgeOptimization} 
                               onCheckedChange={setEdgeOptimization}
-                            />
-                          </div>
+                              className="data-[state=checked]:bg-blue-600 data-[state=checked]:border-blue-600 border-gray-600"
+                        />
+                      </div>
                           <p className="text-xs text-gray-400">
                             Run AI locally for improved privacy/speed
                           </p>
                         </div>
-                      </div>
+                      </Card>
                     </div>
                   </div>
                   
-                  <div className="flex justify-end gap-3 pt-4">
+                  <div className="flex justify-end gap-3 pt-8 mt-8">
                     <Button
                       variant="outline"
                       onClick={resetSettings}
                       className="border-gray-800 bg-gray-900 hover:bg-gray-800 text-gray-300 hover:text-white"
                     >
-                      <RotateCcw className="h-4 w-4 mr-2" />
+                          <RotateCcw className="h-4 w-4 mr-2" />
                       Reset Defaults
-                    </Button>
+                        </Button>
                     <Button
                       onClick={saveSettings}
                       className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white"
                     >
-                      <Save className="h-4 w-4 mr-2" />
-                      Save Settings
-                    </Button>
-                  </div>
-                </div>
-              </div>
+                          <Save className="h-4 w-4 mr-2" />
+                          Save Settings
+                        </Button>
+                      </div>
+                    </div>
+              </ScrollArea>
             </TabsContent>
           </Tabs>
         </div>

@@ -2,7 +2,6 @@
 
 import { useState, useEffect, ReactNode } from "react";
 import { LoginModal } from "./LoginModal";
-import { useRouter } from "next/navigation";
 
 interface ConsoleAuthWrapperProps {
   children: ReactNode;
@@ -11,7 +10,6 @@ interface ConsoleAuthWrapperProps {
 export function ConsoleAuthWrapper({ children }: ConsoleAuthWrapperProps) {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
   const [showLoginModal, setShowLoginModal] = useState(false);
-  const router = useRouter();
 
   useEffect(() => {
     // Check if user is already authenticated (using localStorage in this example)

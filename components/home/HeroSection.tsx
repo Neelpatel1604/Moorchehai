@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { ArrowRight } from "lucide-react";
 
 export function HeroSection() {
   return (
@@ -12,10 +13,17 @@ export function HeroSection() {
             Deploy powerful AI solutions at the edge with Moorcheh - no complex infrastructure required.
           </p>
           <div className="mt-8 flex justify-center space-x-3">
-            <Button className="bg-[#1e40af] hover:bg-blue-800">Get Started</Button>
-            <Button variant="outline" className="border-[#1e40af] text-[#1e40af]">
-              Learn More
-            </Button>
+            <div className="inline-flex rounded-md shadow group">
+              <Button className="bg-[#1e40af] text-white hover:bg-blue-800 font-medium px-6 py-2 text-sm transition-all duration-300 hover:shadow-xl hover:scale-105 flex items-center gap-2 group-hover:gap-3">
+                Get Started
+                <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+              </Button>
+            </div>
+            <div className="inline-flex rounded-md shadow group">
+              <Button variant="outline" className="border-[#1e40af] text-[#1e40af] hover:bg-blue-50 font-medium px-6 py-2 text-sm transition-all duration-300 hover:scale-105 hover:border-blue-700">
+                Learn More
+              </Button>
+            </div>
           </div>
         </div>
       </div>

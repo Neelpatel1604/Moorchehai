@@ -7,7 +7,7 @@ export function HeroSection() {
             Simple, <span className="text-[#1e40af]">Transparent</span> Pricing
           </h1>
           <p className="mt-5 max-w-xl mx-auto text-xl text-gray-500">
-            Choose the plan that's right for your business, with no hidden fees or surprises
+            Choose the plan that`&apos;`s right for your business, with no hidden fees or surprises
           </p>
         </div>
       </div>

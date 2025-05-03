@@ -45,7 +45,8 @@ export function LoginModal({ isOpen, onLogin, onSkip }: LoginModalProps) {
         
         <div className="mt-8 flex flex-col space-y-3">
           <Button 
-            className="bg-[#1e40af] hover:bg-blue-800 text-white"
+            type="submit" 
+            className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white"
             onClick={onLogin}
           >
             Sign In

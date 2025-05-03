@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import { APIKeys } from "@/components/console/APIKeys";
-import { ConsoleLayout } from "@/components/console/ConsoleLayout";
 import { RestrictedAccess } from "@/components/console/RestrictedAccess";
 
 export default function APIKeysPage() {
@@ -19,17 +18,11 @@ export default function APIKeysPage() {
   
   if (isLoading) {
     return (
-      <ConsoleLayout>
         <div className="flex items-center justify-center h-full">
           <div className="w-8 h-8 border-4 border-t-blue-500 border-r-transparent border-l-transparent border-b-transparent rounded-full animate-spin"></div>
         </div>
-      </ConsoleLayout>
     );
   }
   
-  return (
-    <ConsoleLayout>
-      {isGuestMode ? <RestrictedAccess /> : <APIKeys />}
-    </ConsoleLayout>
-  );
+  return isGuestMode ? <RestrictedAccess /> : <APIKeys />;
 } 

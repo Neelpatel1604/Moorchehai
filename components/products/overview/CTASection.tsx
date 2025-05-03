@@ -1,4 +1,6 @@
 import { Button } from "@/components/ui/button";
+import { FileText } from "lucide-react";
+import Link from "next/link";
 
 export function CTASection() {
   return (
@@ -9,13 +11,16 @@ export function CTASection() {
           <span className="block text-white opacity-75">Explore our pricing plans.</span>
         </h2>
         <div className="mt-8 flex lg:mt-0 lg:flex-shrink-0">
-          <div className="inline-flex rounded-md shadow">
-            <Button className="bg-white text-[#1e40af] hover:bg-gray-100">
-              View Pricing
-            </Button>
+          <div className="inline-flex rounded-md shadow group">
+            <Link href="/products/pricing">
+              <Button className="bg-white text-[#1e40af] hover:bg-gray-50 font-medium px-6 py-2 text-sm transition-all duration-300 hover:shadow-xl hover:scale-105 flex items-center gap-2">
+                <FileText className="h-4 w-4 transition-all duration-300 group-hover:scale-110" />
+                View Pricing
+              </Button>
+            </Link>
           </div>
-          <div className="ml-3 inline-flex rounded-md shadow">
-            <Button variant="outline" className="border-white text-white hover:bg-white/10">
+          <div className="ml-3 inline-flex rounded-md shadow group">
+            <Button variant="outline" className="border-white text-blue hover:bg-white/20 font-medium px-6 py-2 text-sm transition-all duration-300 hover:scale-105 group-hover:border-opacity-100 border-opacity-70 flex items-center gap-2">
               Contact Sales
             </Button>
           </div>
@@ -23,4 +28,4 @@ export function CTASection() {
       </div>
     </div>
   );
-} 
+}

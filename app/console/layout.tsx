@@ -1,13 +1,9 @@
-import { ConsoleAuthWrapper } from "@/components/console/ConsoleAuthWrapper";
+import { ConsoleLayout } from '@/components/console/ConsoleLayout';
 
 export default function ConsoleRootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  return (
-    <ConsoleAuthWrapper>
-      {children}
-    </ConsoleAuthWrapper>
-  );
+  return <ConsoleLayout>{children}</ConsoleLayout>;
 } 

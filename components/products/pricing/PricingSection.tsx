@@ -117,7 +117,7 @@ function PricingCard({
       </div>
       
       <div className="py-6 px-6">
-        <h3 className="text-xs font-medium text-gray-900 tracking-wide uppercase">What's included</h3>
+        <h3 className="text-xs font-medium text-gray-900 tracking-wide uppercase">What`&apos;`s included</h3>
         <ul className="mt-4 space-y-3">
           {features.map((feature, index) => (
             <li key={index} className="flex items-start">

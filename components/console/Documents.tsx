@@ -5,23 +5,17 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import {
-  AlertCircle,
   Clock,
   FileText,
   FolderPlus,
-  HardDrive,
   Search,
   Trash2,
   Upload,
   File,
-  X,
-  CheckCircle,
   Info,
-  Command as CommandIcon,
   Plus
 } from "lucide-react";
 
@@ -107,27 +101,6 @@ export function Documents() {
   
   return (
     <div className="flex flex-col h-screen bg-black">
-      {/* Header */}
-      <header className="border-b border-gray-800 bg-gray-950 py-4 px-6">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <div className="flex items-center">
-            <div className="h-8 w-8 rounded-md bg-gradient-to-br from-blue-500 to-purple-500 mr-3 flex items-center justify-center">
-              <HardDrive className="h-5 w-5 text-white" />
-            </div>
-            <h1 className="text-xl font-bold text-white">Moorcheh</h1>
-          </div>
-          
-          <div className="flex items-center gap-6">
-            <nav className="hidden md:flex items-center gap-6">
-              <a href="/console" className="text-sm font-medium text-gray-400 hover:text-white transition-colors">Dashboard</a>
-              <a href="/console/playground" className="text-sm font-medium text-gray-400 hover:text-white transition-colors">Playground</a>
-              <a href="/console/documents" className="text-sm font-medium text-white border-b-2 border-blue-500 pb-1">Documents</a>
-              <a href="/console/api-keys" className="text-sm font-medium text-gray-400 hover:text-white transition-colors">API Keys</a>
-              <a href="/console/docs" className="text-sm font-medium text-gray-400 hover:text-white transition-colors">Documentation</a>
-            </nav>
-          </div>
-        </div>
-      </header>
       
       {/* Main content */}
       <div className="flex-1 overflow-hidden p-6">
@@ -185,7 +158,7 @@ export function Documents() {
               </div>
               <div className="h-2 w-full bg-gray-800 rounded-full overflow-hidden">
                 <div 
-                  className="h-full bg-blue-600 rounded-full transition-all duration-200" 
+                  className="h-full bg-gradient-to-r from-blue-600 to-purple-600 rounded-full transition-all duration-200" 
                   style={{ width: `${uploadProgress}%` }}
                 ></div>
               </div>

@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
 import {
   NavigationMenu,
@@ -13,8 +12,8 @@ import {
 } from "@/components/ui/navigation-menu";
 import { Button } from "./button";
 import { cn } from "@/lib/utils";
-import { Menu, X } from "lucide-react";
-import { Sheet, SheetContent, SheetTrigger, SheetClose } from "@/components/ui/sheet";
+import { Menu} from "lucide-react";
+import { Sheet, SheetContent, SheetTrigger} from "@/components/ui/sheet";
 
 export function Navbar() {
   return (
@@ -23,7 +22,11 @@ export function Navbar() {
         <div className="flex justify-between h-16">
           <div className="flex items-center">
             <Link href="/" className="flex-shrink-0 flex items-center">
-              <span className="text-xl font-bold text-[#1e40af]">Moorcheh</span>
+              <img 
+                src="/moorcheh-logo.png" 
+                alt="Moorcheh" 
+                className="h-10 w-auto"
+              />
             </Link>
           </div>
           

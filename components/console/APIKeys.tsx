@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import React from "react";
+import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -14,12 +15,8 @@ import {
   Shield,
   Eye,
   EyeOff,
-  Cpu,
   MoreHorizontal,
-  RefreshCcw,
   Clock,
-  BarChart3,
-  Command
 } from "lucide-react";
 import { 
   Dialog, 
@@ -34,7 +31,6 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
@@ -152,29 +148,6 @@ export function APIKeys() {
   
   return (
     <div className="min-h-screen bg-black">
-      {/* Header */}
-      <header className="border-b border-gray-800 bg-black py-4 px-6">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <div className="flex items-center">
-            <div className="h-8 w-8 rounded-md bg-gradient-to-br from-blue-500 to-purple-600 mr-3 flex items-center justify-center">
-              <Cpu className="h-5 w-5 text-white" />
-            </div>
-            <h1 className="text-xl font-bold text-white">Moorcheh</h1>
-          </div>
-          
-          <div className="flex items-center gap-6">
-            <nav className="hidden md:flex items-center gap-6">
-              <a href="/console" className="text-sm font-medium text-gray-400 hover:text-white transition-colors">Dashboard</a>
-              <a href="/console/playground" className="text-sm font-medium text-gray-400 hover:text-white transition-colors">Playground</a>
-              <a href="/console/documents" className="text-sm font-medium text-gray-400 hover:text-white transition-colors">Documents</a>
-              <a href="/console/api-keys" className="text-sm font-medium text-white border-b-2 border-blue-500 pb-1">API Keys</a>
-              <a href="/console/docs" className="text-sm font-medium text-gray-400 hover:text-white transition-colors">Documentation</a>
-            </nav>
-            
-          </div>
-        </div>
-      </header>
-      
       <div className="p-8 max-w-7xl mx-auto">
         <div className="flex items-center justify-between mb-6">
           <div>
@@ -253,7 +226,7 @@ export function APIKeys() {
                         className="bg-gray-800 border-gray-700 text-white focus-visible:ring-blue-500"
                       />
                       <p className="text-xs text-gray-500">
-                        Choose a descriptive name to identify this key's purpose
+                        Choose a descriptive name to identify this key`&apos;`s purpose
                       </p>
                     </div>
                   </div>
@@ -301,41 +274,6 @@ export function APIKeys() {
               </TabsTrigger>
             </TabsList>
             
-            <div className="flex gap-2">
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button 
-                      variant="outline" 
-                      size="sm"
-                      className="border-gray-800 text-gray-400 hover:bg-gray-900 hover:text-white"
-                    >
-                      <RefreshCcw className="h-4 w-4" />
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>Refresh API Keys</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-              
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button 
-                      variant="outline" 
-                      size="sm"
-                      className="border-gray-800 text-gray-400 hover:bg-gray-900 hover:text-white"
-                    >
-                      <BarChart3 className="h-4 w-4" />
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>View Usage Analytics</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            </div>
           </div>
           
           <Card className="bg-gray-950 border-gray-800 overflow-hidden rounded-lg shadow-md shadow-blue-900/5">
