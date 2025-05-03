@@ -166,14 +166,11 @@ export function APIKeys() {
             <nav className="hidden md:flex items-center gap-6">
               <a href="/console" className="text-sm font-medium text-gray-400 hover:text-white transition-colors">Dashboard</a>
               <a href="/console/playground" className="text-sm font-medium text-gray-400 hover:text-white transition-colors">Playground</a>
+              <a href="/console/documents" className="text-sm font-medium text-gray-400 hover:text-white transition-colors">Documents</a>
               <a href="/console/api-keys" className="text-sm font-medium text-white border-b-2 border-blue-500 pb-1">API Keys</a>
               <a href="/console/docs" className="text-sm font-medium text-gray-400 hover:text-white transition-colors">Documentation</a>
             </nav>
             
-            <Button size="sm" variant="outline" className="border-gray-700 text-gray-300 hover:bg-gray-800 hover:text-white">
-              <Command className="h-4 w-4 mr-2" />
-              <span>Quick Actions</span>
-            </Button>
           </div>
         </div>
       </header>

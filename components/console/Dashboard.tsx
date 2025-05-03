@@ -15,7 +15,9 @@ import {
   Cpu,
   Code,
   Info,
-  ChevronRight
+  ChevronRight,
+  Sparkles,
+  Book
 } from "lucide-react";
 
 export function Dashboard() {
@@ -37,14 +39,11 @@ export function Dashboard() {
             <nav className="hidden md:flex items-center gap-6">
               <a href="/console" className="text-sm font-medium text-white">Dashboard</a>
               <a href="/console/playground" className="text-sm font-medium text-gray-400 hover:text-white transition-colors">Playground</a>
+              <a href="/console/documents" className="text-sm font-medium text-gray-400 hover:text-white transition-colors">Documents</a>
               <a href="/console/api-keys" className="text-sm font-medium text-gray-400 hover:text-white transition-colors">API Keys</a>
               <a href="/console/docs" className="text-sm font-medium text-gray-400 hover:text-white transition-colors">Documentation</a>
             </nav>
             
-            <Button size="sm" variant="outline" className="border-gray-700 text-gray-300 hover:bg-gray-800 hover:text-white">
-              <Command className="h-4 w-4 mr-2" />
-              <span>Quick Actions</span>
-            </Button>
           </div>
         </div>
       </header>
@@ -140,29 +139,29 @@ export function Dashboard() {
               <h3 className="text-lg font-medium text-white mb-4">Quick Actions</h3>
               
               <div className="space-y-3">
-                <ActionLink
-                  title="Create API Key"
-                  description="Generate new credentials"
-                  icon={Key}
-                  href="/console/api-keys/new"
+                <QuickAccessCard 
+                  title="API Keys" 
+                  description="Create and manage your API keys" 
+                  Icon={Key} 
+                  href="/console/api-keys/new" 
                 />
-                <ActionLink
-                  title="Open Playground"
-                  description="Test models in real-time"
-                  icon={Code}
-                  href="/console/playground"
+                <QuickAccessCard 
+                  title="Playground" 
+                  description="Test and experiment with Moorcheh AI" 
+                  Icon={Sparkles} 
+                  href="/console/playground" 
                 />
-                <ActionLink
-                  title="View Documentation"
-                  description="Integration guides & references"
-                  icon={FileText}
-                  href="/console/docs"
+                <QuickAccessCard 
+                  title="Documents" 
+                  description="Upload and manage your documents" 
+                  Icon={FileText} 
+                  href="/console/documents" 
                 />
-                <ActionLink
-                  title="Explore Models"
-                  description="See available edge AI models"
-                  icon={Cpu}
-                  href="/console/models"
+                <QuickAccessCard 
+                  title="Documentation" 
+                  description="Read guides and API reference" 
+                  Icon={Book} 
+                  href="/console/docs" 
                 />
               </div>
             </Card>
@@ -267,27 +266,70 @@ function QuickStatCard({ title, value, change, positive, icon: Icon }) {
   );
 }
 
-function ActionLink({ title, description, icon: Icon, href }) {
+interface QuickAccessCardProps {
+  title: string;
+  description: string;
+  Icon: React.ElementType;
+  href: string;
+}
+
+function QuickAccessCard({ title, description, Icon, href }: QuickAccessCardProps) {
   return (
     <a 
       href={href}
-      className="flex items-center justify-between p-3 rounded-md hover:bg-gray-800 transition-colors"
+      className="block p-4 bg-gray-900 border border-gray-800 rounded-lg hover:bg-gray-800 transition-colors group"
     >
-      <div className="flex items-center">
-        <div className="p-2 rounded-md bg-gray-800 mr-3">
-          <Icon className="h-4 w-4 text-blue-400" />
+      <div className="flex items-start">
+        <div className="mr-3 mt-0.5">
+          <div className="p-2 bg-blue-900/30 rounded-md text-blue-500">
+            <Icon className="h-5 w-5" />
+          </div>
         </div>
-        <div>
-          <p className="font-medium text-gray-200">{title}</p>
-          <p className="text-xs text-gray-500">{description}</p>
+        <div className="flex-1">
+          <h3 className="font-medium text-white group-hover:text-blue-400 transition-colors">{title}</h3>
+          <p className="text-sm text-gray-400 mt-1">{description}</p>
         </div>
+        <ChevronRight className="h-5 w-5 text-gray-500 group-hover:text-gray-300 transition-colors self-center" />
       </div>
-      <ChevronRight className="h-4 w-4 text-gray-600" />
     </a>
   );
 }
 
-function ActivityItem({ title, description, time }) {
+interface StatCardProps {
+  title: string;
+  value: string | number;
+  change?: string;
+  positive?: boolean;
+  Icon: React.ElementType;
+}
+
+function StatCard({ title, value, change, positive = true, Icon }: StatCardProps) {
+  return (
+    <Card className="bg-gray-900 border-gray-800 p-6">
+      <div className="flex items-start justify-between">
+        <div>
+          <p className="text-sm font-medium text-gray-400">{title}</p>
+          <p className="mt-1 text-2xl font-semibold text-white">{value}</p>
+          <div className={`mt-1 flex items-center text-xs ${positive ? 'text-green-500' : 'text-red-500'}`}>
+            {change}
+            <span className="ml-2 text-gray-500 text-xs">vs. last week</span>
+          </div>
+        </div>
+        <div className="p-2 rounded-md bg-gray-800">
+          <Icon className="h-5 w-5 text-blue-400" />
+        </div>
+      </div>
+    </Card>
+  );
+}
+
+interface ActivityItemProps {
+  title: string;
+  description: string;
+  time: string;
+}
+
+function ActivityItem({ title, description, time }: ActivityItemProps) {
   return (
     <div className="flex items-start gap-3 p-3 rounded-md hover:bg-gray-800 transition-colors">
       <div className="p-2 rounded-full bg-gray-800">
