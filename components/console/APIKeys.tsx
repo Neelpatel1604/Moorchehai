@@ -165,6 +165,7 @@ export function APIKeys() {
               </Button>
             </DialogTrigger>
             <DialogContent className="bg-gray-900 text-white border-gray-800 shadow-lg shadow-blue-900/10">
+              <DialogTitle className="sr-only">API Keys</DialogTitle>
               <DialogHeader>
                 <DialogTitle className="text-xl flex items-center">
                   <Key className="h-5 w-5 mr-2 text-blue-500" />

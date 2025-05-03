@@ -37,12 +37,14 @@
     "@radix-ui/react-toggle": "^1.1.6",
     "@radix-ui/react-toggle-group": "^1.1.7",
     "@radix-ui/react-tooltip": "^1.2.4",
+    "@vercel/analytics": "^1.5.0",
     "autoprefixer": "^10.4.21",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
     "embla-carousel-react": "^8.6.0",
     "input-otp": "^1.4.2",
+    "jotai": "^2.12.3",
     "lucide-react": "^0.503.0",
     "next": "^15.3.1",
     "next-themes": "^0.4.6",
@@ -54,7 +56,10 @@
     "recharts": "^2.15.3",
     "sonner": "^2.0.3",
     "tailwind-merge": "^3.2.0",
-    "vaul": "^1.1.2"
+    "unist": "^0.0.1",
+    "unist-builder": "^4.0.0",
+    "vaul": "^1.1.2",
+    "zod": "^3.24.3"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
