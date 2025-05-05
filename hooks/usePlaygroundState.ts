@@ -60,7 +60,30 @@ export function usePlaygroundState() {
       page: 4,
       content: 'Edge computing is a distributed computing paradigm...',
     },
-    // ... (other metadata items)
+    {
+      id: "doc2", 
+      score: 0.7821, 
+      label: "Medium Relevance", 
+      source: "ai_models.docx", 
+      page: 12, 
+      content: "Optimizing AI models for edge devices requires careful consideration of model size, latency requirements, and hardware constraints..."
+    },
+    {
+      id: "doc3", 
+      score: 0.4732, 
+      label: "Low Relevance", 
+      source: "data_privacy.pdf", 
+      page: 7, 
+      content: "Edge deployment of AI models can significantly enhance privacy by processing sensitive data locally without transmitting it to cloud servers..."
+    },
+    {
+      id: "doc4", 
+      score: 0.1245, 
+      label: "Very Low Relevance", 
+      source: "deployment_guide.txt", 
+      page: 2, 
+      content: "The deployment process involves configuring the runtime environment, optimizing model parameters, and setting up monitoring tools..."
+    }
   ];
 
   // Effects
